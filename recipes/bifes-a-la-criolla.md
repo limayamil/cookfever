@@ -19,6 +19,10 @@
 - 3 cdas | aceite de oliva
 - a gusto | sal fina
 - a gusto | pimienta negra
+- 2 dientes | ajo | opcional, picados fino
+- 1 hoja | laurel | opcional; puede reemplazarse por 1 cdta de orégano
+- 1/2 cdta | ají molido | opcional
+- 2 cdas | perejil fresco | opcional, picado
 
 ## Equipo
 - Tabla y cuchillo
@@ -46,11 +50,23 @@
 - tiempo: 6 min.
 - detalle: Revolvé seguido para que las verduras se ablanden sin tomar gusto quemado.
 
+### Plus: Perfumar con ajo
+- accion: Sumá el ajo picado cuando la cebolla y los morrones ya estén blandos.
+- fuego: Fuego medio-bajo.
+- tiempo: 1 min.
+- detalle: Es opcional, pero le da más fondo a la salsa. Si el ajo se dora muy rápido, bajá el fuego.
+
 ### Armar la salsa
 - accion: Sumá tomate triturado, caldo, pimentón, sal y pimienta. Mezclá bien.
 - fuego: Fuego medio.
 - tiempo: 3 min.
 - detalle: Raspá el fondo con la cuchara para levantar el sabor que dejó la carne.
+
+### Plus: Condimentar más criollo
+- accion: Agregá laurel u orégano y ají molido junto con el tomate y el caldo.
+- fuego: Fuego medio.
+- tiempo: 1 min.
+- detalle: El laurel suma aroma lento; el ají molido da un picor suave. Usalos de a poco si no conocés su intensidad.
 
 ### Cocinar papas y carne
 - accion: Agregá las papas en capas, apoyá los bifes encima y tapá la sartén.
@@ -63,3 +79,9 @@
 - fuego: Sin fuego.
 - tiempo: 4 min.
 - detalle: El reposo acomoda los jugos y termina de integrar la salsa con las papas.
+
+### Plus: Terminar con perejil
+- accion: Espolvoreá perejil fresco picado justo antes de llevar a la mesa.
+- fuego: Sin fuego.
+- tiempo: 1 min.
+- detalle: Es un cierre fresco que corta la salsa y hace que el plato se sienta menos pesado.

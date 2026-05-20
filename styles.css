@@ -33,6 +33,8 @@
   --color-cobalt-wash: rgba(31, 74, 115, 0.12);
   --color-amber: #b55d12;
   --color-amber-wash: rgba(181, 93, 18, 0.13);
+  --color-plus: #7b3f98;
+  --color-plus-wash: rgba(123, 63, 152, 0.12);
   --color-heat-low: #7d5017;
   --color-heat-low-wash: rgba(125, 80, 23, 0.12);
   --color-heat-medium: #b65021;
@@ -413,6 +415,13 @@ h1 {
   transform-origin: 50% 24px;
 }
 
+.page-card.plus-page {
+  border-color: rgba(123, 63, 152, 0.34);
+  background:
+    linear-gradient(90deg, var(--color-plus-wash), transparent 18%),
+    var(--color-page);
+}
+
 .page-card.is-entering {
   animation: page-pop 260ms ease both;
 }
@@ -440,6 +449,26 @@ h1 {
   width: 0.72em;
   height: 0.72em;
   color: var(--color-accent);
+}
+
+.page-card.plus-page .page-eyebrow,
+.page-card.plus-page h2 .ui-icon {
+  color: var(--color-plus);
+}
+
+.plus-note {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: calc(var(--space-3) * -1) 0 var(--space-5);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgba(123, 63, 152, 0.2);
+  border-radius: 999px;
+  color: var(--color-plus);
+  background: var(--color-plus-wash);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .ingredient-grid,

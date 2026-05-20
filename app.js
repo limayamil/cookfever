@@ -42,6 +42,7 @@ const iconPaths = {
   timer: '<path d="M10 2h4"></path><path d="M12 14l2.4-2.4"></path><circle cx="12" cy="13" r="7.5"></circle>',
   ingredient: '<path d="M6 20c5.2 0 9.5-4.3 9.5-9.5V5H10C4.8 5 2 8.3 2 12.5 2 16.6 4.9 20 6 20Z"></path><path d="M6.5 17.5 16 8"></path><path d="M14 20c4.5-.3 8-4.1 8-8.7V7h-4.1"></path>',
   equipment: '<path d="M5 11h14"></path><path d="M7 11v7a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3v-7"></path><path d="M9 11V7a3 3 0 0 1 6 0v4"></path><path d="M4 11a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2"></path>',
+  plus: '<path d="M12 3.5 14.6 8.8 20.4 9.6 16.2 13.7 17.2 19.5 12 16.8 6.8 19.5 7.8 13.7 3.6 9.6 9.4 8.8 12 3.5Z"></path>',
   arrowRight: '<path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path>',
   arrowLeft: '<path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path>',
   check: '<path d="m5 12 4.2 4.2L19 6.5"></path>',
@@ -171,12 +172,15 @@ function parseRecipe(markdown, path) {
     }
 
     if (section === "pasos" && /^###\s+/.test(line)) {
+      const rawTitle = cleanInline(line.replace(/^###\s+/, ""));
+      const isPlus = /^plus\s*:/i.test(rawTitle);
       currentStep = {
-        title: cleanInline(line.replace(/^###\s+/, "")),
+        title: isPlus ? rawTitle.replace(/^plus\s*:\s*/i, "").trim() : rawTitle,
         body: "",
         heat: "",
         time: "",
-        detail: ""
+        detail: "",
+        isPlus
       };
       recipe.steps.push(currentStep);
       continue;
@@ -284,6 +288,7 @@ function renderStep() {
   const page = pages[state.activeStep];
 
   els.stepCard.classList.remove("is-entering");
+  els.stepCard.classList.toggle("plus-page", Boolean(page.isPlus));
   els.stepCard.innerHTML = page.html;
   requestAnimationFrame(() => els.stepCard.classList.add("is-entering"));
   els.previousStep.disabled = state.activeStep === 0;
@@ -299,6 +304,7 @@ function renderStep() {
 
 function buildPages(recipe) {
   const heatGuideMeta = getHeatMeta(recipe.heatGuide);
+  let stepNumber = 0;
   return [
     {
       html: `
@@ -321,19 +327,31 @@ function buildPages(recipe) {
         ${recipe.heatGuide ? renderCallout("heat", "Guia de fuego", recipe.heatGuide, heatGuideMeta) : ""}
       `
     },
-    ...recipe.steps.map((step, index) => ({
-      html: `
-        <p class="page-eyebrow">paso ${index + 1}</p>
-        <h2>${escapeHtml(step.title)}</h2>
-        <div class="step-body">${escapeHtml(step.body)}</div>
-        ${step.detail ? `<p class="step-detail">${escapeHtml(step.detail)}</p>` : ""}
-        <div class="hint-stack">
-          ${step.heat ? renderCallout("heat", "Fuego", step.heat, getHeatMeta(step.heat)) : ""}
-          ${step.time ? renderCallout("timer", "Tiempo", step.time) : ""}
-        </div>
-      `
-    }))
+    ...recipe.steps.map((step) => {
+      if (!step.isPlus) stepNumber += 1;
+      return renderStepPage(step, stepNumber);
+    })
   ];
+}
+
+function renderStepPage(step, stepNumber) {
+  const eyebrow = step.isPlus ? "plus opcional" : `paso ${stepNumber}`;
+  const title = step.isPlus ? `${icon("plus")}${escapeHtml(step.title)}` : escapeHtml(step.title);
+
+  return {
+    isPlus: step.isPlus,
+    html: `
+      <p class="page-eyebrow">${eyebrow}</p>
+      <h2>${title}</h2>
+      ${step.isPlus ? `<p class="plus-note">Bonus para mejorar la receta. Podés saltearlo y seguir con el próximo paso.</p>` : ""}
+      <div class="step-body">${escapeHtml(step.body)}</div>
+      ${step.detail ? `<p class="step-detail">${escapeHtml(step.detail)}</p>` : ""}
+      <div class="hint-stack">
+        ${step.heat ? renderCallout("heat", "Fuego", step.heat, getHeatMeta(step.heat)) : ""}
+        ${step.time ? renderCallout("timer", "Tiempo", step.time) : ""}
+      </div>
+    `
+  };
 }
 
 function formatIngredient(ingredient) {
