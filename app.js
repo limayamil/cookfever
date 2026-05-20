@@ -5,10 +5,13 @@ const recipeManifest = [
   "recipes/pasta-tomate.md"
 ];
 
+const ingredientStorageKey = "cookfever.checkedIngredients.v1";
+
 const state = {
   recipes: [],
   activeRecipe: null,
-  activeStep: 0
+  activeStep: 0,
+  checkedIngredients: readCheckedIngredients()
 };
 
 const els = {
@@ -52,6 +55,40 @@ const iconPaths = {
 
 function icon(name) {
   return `<svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24">${iconPaths[name] || iconPaths.check}</svg>`;
+}
+
+function readCheckedIngredients() {
+  try {
+    return JSON.parse(localStorage.getItem(ingredientStorageKey)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveCheckedIngredients() {
+  localStorage.setItem(ingredientStorageKey, JSON.stringify(state.checkedIngredients));
+}
+
+function getRecipeIngredientKey(recipe) {
+  return recipe.path || recipe.title;
+}
+
+function isIngredientChecked(recipe, index) {
+  return Boolean(state.checkedIngredients[getRecipeIngredientKey(recipe)]?.[index]);
+}
+
+function setIngredientChecked(recipe, index, checked) {
+  const recipeKey = getRecipeIngredientKey(recipe);
+  state.checkedIngredients[recipeKey] = state.checkedIngredients[recipeKey] || {};
+  if (checked) {
+    state.checkedIngredients[recipeKey][index] = true;
+  } else {
+    delete state.checkedIngredients[recipeKey][index];
+  }
+  if (!Object.keys(state.checkedIngredients[recipeKey]).length) {
+    delete state.checkedIngredients[recipeKey];
+  }
+  saveCheckedIngredients();
 }
 
 function renderPill(iconName, text, extraClass = "") {
@@ -294,9 +331,10 @@ function renderRecipeShell() {
   els.recipeTime.innerHTML = `${icon("clock")}<span>${escapeHtml(recipe.time || "tiempo a definir")}</span>`;
   els.recipeDifficulty.innerHTML = `${icon("gauge")}<span>${escapeHtml(recipe.difficulty || "principiante")}</span>`;
   els.servingsBadge.innerHTML = recipe.servings ? `${icon("servings")}<span>${escapeHtml(recipe.servings)}</span>` : "";
-  els.drawerIngredients.innerHTML = recipe.ingredients.map((ingredient) => `
-    <li>${icon("ingredient")}<span>${formatIngredient(ingredient)}</span></li>
+  els.drawerIngredients.innerHTML = recipe.ingredients.map((ingredient, index) => `
+    <li>${renderIngredientCheck(recipe, ingredient, index, "drawer")}</li>
   `).join("");
+  bindIngredientChecks(els.drawerIngredients);
 }
 
 function renderStep() {
@@ -307,6 +345,7 @@ function renderStep() {
   els.stepCard.classList.remove("is-entering");
   els.stepCard.classList.toggle("plus-page", Boolean(page.isPlus));
   els.stepCard.innerHTML = page.html;
+  bindIngredientChecks(els.stepCard);
   requestAnimationFrame(() => els.stepCard.classList.add("is-entering"));
   els.previousStep.disabled = state.activeStep === 0;
   els.previousStep.innerHTML = `${icon("arrowLeft")}<span>Anterior</span>`;
@@ -328,8 +367,8 @@ function buildPages(recipe) {
         <p class="page-eyebrow">antes de prender fuego</p>
         <h2>${icon("ingredient")}Ingredientes medidos</h2>
         <ul class="ingredient-grid">
-          ${recipe.ingredients.map((ingredient) => `
-            <li>${icon("ingredient")}<span><strong>${formatIngredient(ingredient)}</strong>${ingredient.note ? `<em>${escapeHtml(ingredient.note)}</em>` : ""}</span></li>
+          ${recipe.ingredients.map((ingredient, index) => `
+            <li>${renderIngredientCheck(recipe, ingredient, index, "page")}</li>
           `).join("")}
         </ul>
       `
@@ -357,6 +396,36 @@ function buildPages(recipe) {
       return renderStepPage(step, stepNumber);
     })
   ];
+}
+
+function renderIngredientCheck(recipe, ingredient, index, variant) {
+  const inputId = `${variant}-ingredient-${index}`;
+  const checked = isIngredientChecked(recipe, index);
+  return `
+    <label class="ingredient-check ${checked ? "is-checked" : ""}" for="${inputId}">
+      <input
+        id="${inputId}"
+        type="checkbox"
+        data-ingredient-index="${index}"
+        ${checked ? "checked" : ""}
+      >
+      <span class="ingredient-box" aria-hidden="true">${icon("check")}</span>
+      <span class="ingredient-copy">
+        <strong>${formatIngredient(ingredient)}</strong>
+        ${ingredient.note ? `<em>${escapeHtml(ingredient.note)}</em>` : ""}
+      </span>
+    </label>
+  `;
+}
+
+function bindIngredientChecks(root) {
+  root.querySelectorAll("[data-ingredient-index]").forEach((input) => {
+    input.addEventListener("change", () => {
+      setIngredientChecked(state.activeRecipe, input.dataset.ingredientIndex, input.checked);
+      renderRecipeShell();
+      if (state.activeStep === 0) renderStep();
+    });
+  });
 }
 
 function renderStepPage(step, stepNumber) {

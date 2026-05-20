@@ -381,6 +381,75 @@ h1 {
   background: var(--color-page-strong-wash);
 }
 
+.ingredient-check {
+  display: grid;
+  grid-template-columns: 1.55rem minmax(0, 1fr);
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  min-width: 0;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.ingredient-check input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.ingredient-box {
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  margin-top: 0.04rem;
+  border: 1.5px solid var(--color-line-strong);
+  border-radius: 0.42rem;
+  color: transparent;
+  background: var(--color-page);
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.ingredient-check .ingredient-box .ui-icon {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  color: currentColor;
+}
+
+.ingredient-copy {
+  min-width: 0;
+}
+
+.ingredient-check.is-checked .ingredient-box,
+.ingredient-check input:checked + .ingredient-box {
+  border-color: var(--color-herb);
+  color: var(--color-page);
+  background: var(--color-herb);
+}
+
+.ingredient-check.is-checked .ingredient-copy,
+.ingredient-check input:checked ~ .ingredient-copy {
+  color: var(--color-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 0.12em;
+  text-decoration-color: color-mix(in srgb, var(--color-herb) 58%, transparent);
+}
+
+.ingredient-check:has(input:focus-visible) .ingredient-box {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.ingredient-check:active .ingredient-box {
+  transform: scale(0.92);
+}
+
 .ingredients-drawer li .ui-icon,
 .ingredient-grid li .ui-icon,
 .equipment-grid li .ui-icon,
