@@ -35,8 +35,7 @@ const els = {
   stepCard: document.querySelector("#stepCard"),
   previousStep: document.querySelector("#previousStep"),
   nextStep: document.querySelector("#nextStep"),
-  stepCounter: document.querySelector("#stepCounter"),
-  finishToast: document.querySelector("#finishToast")
+  stepCounter: document.querySelector("#stepCounter")
 };
 
 const iconPaths = {
@@ -393,7 +392,6 @@ function openRecipe(index) {
   els.libraryView.hidden = true;
   els.readerView.hidden = false;
   els.ingredientsDrawer.hidden = true;
-  els.finishToast.hidden = true;
   els.ingredientsToggle.setAttribute("aria-expanded", "false");
   renderRecipeShell();
   renderStep();
@@ -588,12 +586,7 @@ function completeRecipe() {
     completed: true,
     completedAt: new Date().toISOString()
   });
-  els.finishToast.innerHTML = `${icon("spark")}<span>${escapeHtml(state.activeRecipe.title)} lista. Buen cierre.</span>`;
-  els.finishToast.hidden = false;
-  setTimeout(() => {
-    closeReader();
-    els.finishToast.hidden = true;
-  }, 900);
+  closeReader();
 }
 
 function formatIngredient(ingredient) {
