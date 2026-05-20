@@ -42,6 +42,7 @@ const iconPaths = {
   timer: '<path d="M10 2h4"></path><path d="M12 14l2.4-2.4"></path><circle cx="12" cy="13" r="7.5"></circle>',
   ingredient: '<path d="M6 20c5.2 0 9.5-4.3 9.5-9.5V5H10C4.8 5 2 8.3 2 12.5 2 16.6 4.9 20 6 20Z"></path><path d="M6.5 17.5 16 8"></path><path d="M14 20c4.5-.3 8-4.1 8-8.7V7h-4.1"></path>',
   equipment: '<path d="M5 11h14"></path><path d="M7 11v7a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3v-7"></path><path d="M9 11V7a3 3 0 0 1 6 0v4"></path><path d="M4 11a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2"></path>',
+  prep: '<path d="M14.5 4.5 19.5 9.5"></path><path d="m4 20 9.8-9.8"></path><path d="M13.8 10.2 16 8l-2-2-2.2 2.2a4.2 4.2 0 0 0 2 2Z"></path><path d="M4 20h6"></path>',
   plus: '<path d="M12 3.5 14.6 8.8 20.4 9.6 16.2 13.7 17.2 19.5 12 16.8 6.8 19.5 7.8 13.7 3.6 9.6 9.4 8.8 12 3.5Z"></path>',
   arrowRight: '<path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path>',
   arrowLeft: '<path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path>',
@@ -133,6 +134,7 @@ function parseRecipe(markdown, path) {
     heatGuide: "",
     ingredients: [],
     equipment: [],
+    prep: [],
     steps: []
   };
 
@@ -168,6 +170,11 @@ function parseRecipe(markdown, path) {
 
     if (section === "equipo" && line.startsWith("- ")) {
       recipe.equipment.push(cleanInline(line.slice(2)));
+      continue;
+    }
+
+    if (isPrepSection(section) && line.startsWith("- ")) {
+      recipe.prep.push(cleanInline(line.slice(2)));
       continue;
     }
 
@@ -235,6 +242,16 @@ function parseIngredient(text) {
 
 function cleanInline(text) {
   return text.replace(/\*\*/g, "").trim();
+}
+
+function isPrepSection(section) {
+  return [
+    "preparacion previa",
+    "preparación previa",
+    "preparacion",
+    "preparación",
+    "mise en place"
+  ].includes(section);
 }
 
 function renderLibrary() {
@@ -324,6 +341,14 @@ function buildPages(recipe) {
         <ul class="equipment-grid">
           ${recipe.equipment.map((item) => `<li>${icon("equipment")}<span>${escapeHtml(item)}</span></li>`).join("")}
         </ul>
+        ${recipe.prep.length ? `
+          <div class="prep-block">
+            <p class="prep-title">${icon("prep")}Cortes y preparación previa</p>
+            <ul class="prep-grid">
+              ${recipe.prep.map((item) => `<li>${icon("prep")}<span>${escapeHtml(item)}</span></li>`).join("")}
+            </ul>
+          </div>
+        ` : ""}
         ${recipe.heatGuide ? renderCallout("heat", "Guia de fuego", recipe.heatGuide, heatGuideMeta) : ""}
       `
     },

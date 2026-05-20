@@ -367,7 +367,8 @@ h1 {
 
 .ingredients-drawer li,
 .ingredient-grid li,
-.equipment-grid li {
+.equipment-grid li,
+.prep-grid li {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
@@ -382,7 +383,8 @@ h1 {
 
 .ingredients-drawer li .ui-icon,
 .ingredient-grid li .ui-icon,
-.equipment-grid li .ui-icon {
+.equipment-grid li .ui-icon,
+.prep-grid li .ui-icon {
   margin-top: 0.1rem;
   color: var(--color-herb);
 }
@@ -472,7 +474,8 @@ h1 {
 }
 
 .ingredient-grid,
-.equipment-grid {
+.equipment-grid,
+.prep-grid {
   display: grid;
   gap: var(--space-3);
   margin: 0;
@@ -481,11 +484,39 @@ h1 {
 }
 
 .ingredient-grid li,
-.equipment-grid li {
+.equipment-grid li,
+.prep-grid li {
   padding: var(--space-4);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   background: var(--color-page-strong-wash);
+}
+
+.prep-block {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.prep-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-cobalt);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.prep-title .ui-icon,
+.prep-grid li .ui-icon {
+  color: var(--color-cobalt);
+}
+
+.prep-grid li {
+  background: var(--color-cobalt-wash);
 }
 
 .ingredient-grid strong {

@@ -31,13 +31,13 @@
 - Cuchara de madera
 - Plato para reservar la carne
 
-## Pasos
-### Preparar verduras y papas
-- accion: Cortá la cebolla en pluma, los morrones en tiras y las papas en rodajas finas.
-- fuego: Sin fuego.
-- tiempo: 8 min.
-- detalle: Las papas finas se cocinan parejo junto con la salsa y la carne.
+## Preparación previa
+- Cortá la cebolla en pluma fina.
+- Cortá el morrón verde y el morrón rojo en tiras.
+- Pelá las papas y cortalas en rodajas finas.
+- Si usás los pluses, picá el ajo y el perejil, y dejá a mano el laurel u orégano y el ají molido.
 
+## Pasos
 ### Sellar los bifes
 - accion: Salpimentá los bifes y doralos de ambos lados con una cucharada de aceite.
 - fuego: Fuego alto.

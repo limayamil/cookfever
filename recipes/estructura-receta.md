@@ -17,6 +17,10 @@
 - Cuchara de madera
 - Tabla y cuchillo
 
+## Preparación previa
+- Cortá o lavá todo lo que se use más adelante antes de prender fuego.
+- Medí condimentos y dejá ingredientes opcionales a mano.
+
 ## Pasos
 ### Preparar
 - accion: Lavá, medí y dejá todos los ingredientes cerca antes de empezar.
