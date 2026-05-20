@@ -138,7 +138,7 @@ function getRecipeStatus(recipe) {
       label: "Lista",
       action: "Cocinar otra vez",
       iconName: "check",
-      stepText: `${pages.length} pasos`
+      stepText: "Lista"
     };
   }
 
@@ -148,7 +148,7 @@ function getRecipeStatus(recipe) {
       label: "Continuar",
       action: "Seguir receta",
       iconName: "arrowRight",
-      stepText: `${Math.min(progress.lastStep + 1, pages.length)}/${pages.length}`
+      stepText: `${Math.min(progress.lastStep + 1, pages.length)}/${pages.length} pasos`
     };
   }
 
@@ -157,7 +157,7 @@ function getRecipeStatus(recipe) {
     label: stats.checked ? `${stats.checked}/${stats.total} listos` : "Empezar",
     action: "Abrir receta",
     iconName: "arrowRight",
-    stepText: `${pages.length} pasos`
+    stepText: stats.checked ? `${stats.checked}/${stats.total} listos` : `${pages.length} pasos`
   };
 }
 
@@ -358,24 +358,27 @@ function isPrepSection(section) {
 }
 
 function renderLibrary() {
-  els.recipeList.innerHTML = state.recipes.map((recipe, index) => `
-    <button class="recipe-card ${getRecipeStatus(recipe).className}" type="button" data-recipe-index="${index}" style="--stagger: ${index}">
-      <span class="recipe-card-copy">
-        <h2>${escapeHtml(recipe.title)}</h2>
-        <p>${escapeHtml(recipe.description || "Receta guiada paso a paso.")}</p>
-        <span class="meta-pills">
-          ${renderPill("clock", recipe.time || "sin tiempo")}
-          ${renderPill("gauge", recipe.difficulty || "principiante")}
-          ${renderPill("servings", recipe.servings || "porciones a definir")}
-          ${renderPill(getRecipeStatus(recipe).iconName, getRecipeStatus(recipe).stepText, "status-pill")}
+  els.recipeList.innerHTML = state.recipes.map((recipe, index) => {
+    const status = getRecipeStatus(recipe);
+    return `
+      <button class="recipe-card ${status.className}" type="button" data-recipe-index="${index}" style="--stagger: ${index}">
+        <span class="recipe-card-copy">
+          <h2>${escapeHtml(recipe.title)}</h2>
+          <p>${escapeHtml(recipe.description || "Receta guiada paso a paso.")}</p>
+          <span class="meta-pills">
+            ${renderPill("clock", recipe.time || "sin tiempo")}
+            ${renderPill("gauge", recipe.difficulty || "principiante")}
+            ${renderPill("servings", recipe.servings || "porciones a definir")}
+            ${renderPill(status.iconName, status.stepText, "status-pill")}
+          </span>
         </span>
-      </span>
-      <span class="recipe-card-action">
-        <span>${escapeHtml(getRecipeStatus(recipe).action)}</span>
-        <span class="arrow" aria-hidden="true">${icon("arrowRight")}</span>
-      </span>
-    </button>
-  `).join("");
+        <span class="recipe-card-action">
+          <span>${escapeHtml(status.action)}</span>
+          <span class="arrow" aria-hidden="true">${icon("arrowRight")}</span>
+        </span>
+      </button>
+    `;
+  }).join("");
 
   els.recipeList.querySelectorAll("[data-recipe-index]").forEach((button) => {
     button.addEventListener("click", () => openRecipe(Number(button.dataset.recipeIndex)));
@@ -441,7 +444,6 @@ function renderStep() {
 }
 
 function buildPages(recipe) {
-  const heatGuideMeta = getHeatMeta(recipe.heatGuide);
   const stats = getIngredientStats(recipe);
   let stepNumber = 0;
   return [
@@ -461,19 +463,10 @@ function buildPages(recipe) {
           <div class="station-tile">
             <span class="station-tile-icon">${icon("equipment")}</span>
             <span>
-              <strong>${recipe.equipment.length || 0} utensilios</strong>
-              <span>${escapeHtml(summarizeList(recipe.equipment, "Equipo a definir"))}</span>
+              <strong>Mesa lista</strong>
+              <span>${escapeHtml(getStationSummary(recipe))}</span>
             </span>
           </div>
-          ${recipe.prep.length ? `
-            <div class="station-tile">
-              <span class="station-tile-icon">${icon("prep")}</span>
-              <span>
-                <strong>${recipe.prep.length} preparaciones</strong>
-                <span>${escapeHtml(summarizeList(recipe.prep, "Cortes previos"))}</span>
-              </span>
-            </div>
-          ` : ""}
         </div>
         ${recipe.prep.length ? `
           <details class="station-details">
@@ -491,7 +484,12 @@ function buildPages(recipe) {
             </ul>
           </details>
         ` : ""}
-        ${recipe.heatGuide ? renderCallout("heat", "Guia de fuego", recipe.heatGuide, heatGuideMeta) : ""}
+        ${recipe.heatGuide ? `
+          <details class="station-details heat-guide-details">
+            <summary>${icon("flame")} Ver guía de fuego</summary>
+            <p>${escapeHtml(recipe.heatGuide)}</p>
+          </details>
+        ` : ""}
       `
     },
     ...recipe.steps.map((step) => {
@@ -561,6 +559,13 @@ function summarizeList(items, fallback) {
   if (!items.length) return fallback;
   const summary = items.slice(0, 2).join(" · ");
   return items.length > 2 ? `${summary} · +${items.length - 2}` : summary;
+}
+
+function getStationSummary(recipe) {
+  const parts = [];
+  if (recipe.equipment.length) parts.push(`${recipe.equipment.length} utensilios`);
+  if (recipe.prep.length) parts.push(`${recipe.prep.length} cortes/preparaciones`);
+  return parts.length ? parts.join(" · ") : "Equipo y cortes a definir";
 }
 
 function openIngredientsDrawer() {

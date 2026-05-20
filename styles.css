@@ -569,6 +569,15 @@ h1 {
     var(--color-page);
 }
 
+.page-card.station-page {
+  min-height: 0;
+}
+
+.station-page h2 {
+  margin-bottom: var(--space-3);
+  font-size: clamp(1.75rem, 7vw, 2.65rem);
+}
+
 .page-card.is-entering {
   animation: page-pop 260ms ease both;
 }
@@ -655,8 +664,8 @@ h1 {
   gap: var(--space-3);
   align-items: center;
   width: 100%;
-  min-height: 76px;
-  padding: var(--space-3);
+  min-height: 68px;
+  padding: 10px;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   color: var(--color-ink);
@@ -714,7 +723,7 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 40px;
+  min-height: 34px;
   color: var(--color-cobalt);
   font-size: 0.86rem;
   font-weight: 900;
@@ -724,6 +733,18 @@ h1 {
 .station-details .equipment-grid,
 .station-details .prep-grid {
   margin-top: var(--space-2);
+}
+
+.heat-guide-details p {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  background: var(--color-heat-low-wash);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .prep-title {
@@ -1045,6 +1066,10 @@ h1 {
 @media (max-width: 768px) {
   .app-shell {
     width: min(100%, 640px);
+  }
+
+  .step-nav {
+    bottom: max(var(--space-2), env(safe-area-inset-bottom));
   }
 }
 
