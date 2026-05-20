@@ -1,17 +1,18 @@
 const recipeManifest = [
-  "recipes/estructura-receta.md",
   "recipes/focaccia-principiantes.md",
   "recipes/bifes-a-la-criolla.md",
   "recipes/pasta-tomate.md"
 ];
 
 const ingredientStorageKey = "cookfever.checkedIngredients.v1";
+const progressStorageKey = "cookfever.recipeProgress.v2";
 
 const state = {
   recipes: [],
   activeRecipe: null,
   activeStep: 0,
-  checkedIngredients: readCheckedIngredients()
+  checkedIngredients: readStorage(ingredientStorageKey),
+  recipeProgress: readStorage(progressStorageKey)
 };
 
 const els = {
@@ -25,6 +26,7 @@ const els = {
   ingredientsToggle: document.querySelector("#ingredientsToggle"),
   ingredientsDrawer: document.querySelector("#ingredientsDrawer"),
   drawerIngredients: document.querySelector("#drawerIngredients"),
+  drawerSummary: document.querySelector("#drawerSummary"),
   servingsBadge: document.querySelector("#servingsBadge"),
   recipeTitle: document.querySelector("#recipeTitle"),
   recipeIntro: document.querySelector("#recipeIntro"),
@@ -33,7 +35,8 @@ const els = {
   stepCard: document.querySelector("#stepCard"),
   previousStep: document.querySelector("#previousStep"),
   nextStep: document.querySelector("#nextStep"),
-  stepCounter: document.querySelector("#stepCounter")
+  stepCounter: document.querySelector("#stepCounter"),
+  finishToast: document.querySelector("#finishToast")
 };
 
 const iconPaths = {
@@ -50,6 +53,7 @@ const iconPaths = {
   arrowRight: '<path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path>',
   arrowLeft: '<path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path>',
   check: '<path d="m5 12 4.2 4.2L19 6.5"></path>',
+  spark: '<path d="M12 3.5 13.3 8.2 18 9.5 13.3 10.8 12 15.5 10.7 10.8 6 9.5 10.7 8.2 12 3.5Z"></path><path d="M18 14v5"></path><path d="M15.5 16.5h5"></path>',
   reload: '<path d="M20 12a8 8 0 1 1-2.4-5.7"></path><path d="M20 4v5h-5"></path>'
 };
 
@@ -57,9 +61,9 @@ function icon(name) {
   return `<svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24">${iconPaths[name] || iconPaths.check}</svg>`;
 }
 
-function readCheckedIngredients() {
+function readStorage(key) {
   try {
-    return JSON.parse(localStorage.getItem(ingredientStorageKey)) || {};
+    return JSON.parse(localStorage.getItem(key)) || {};
   } catch {
     return {};
   }
@@ -69,8 +73,36 @@ function saveCheckedIngredients() {
   localStorage.setItem(ingredientStorageKey, JSON.stringify(state.checkedIngredients));
 }
 
+function saveRecipeProgress() {
+  localStorage.setItem(progressStorageKey, JSON.stringify(state.recipeProgress));
+}
+
 function getRecipeIngredientKey(recipe) {
   return recipe.path || recipe.title;
+}
+
+function getRecipeProgressKey(recipe) {
+  return recipe.path || recipe.title;
+}
+
+function getRecipeProgress(recipe) {
+  return state.recipeProgress[getRecipeProgressKey(recipe)] || { lastStep: 0, completed: false };
+}
+
+function setRecipeProgress(recipe, updates) {
+  const recipeKey = getRecipeProgressKey(recipe);
+  state.recipeProgress[recipeKey] = {
+    ...getRecipeProgress(recipe),
+    ...updates
+  };
+  saveRecipeProgress();
+}
+
+function getIngredientStats(recipe) {
+  const checked = recipe.ingredients.reduce((total, _ingredient, index) => (
+    total + (isIngredientChecked(recipe, index) ? 1 : 0)
+  ), 0);
+  return { checked, total: recipe.ingredients.length };
 }
 
 function isIngredientChecked(recipe, index) {
@@ -93,6 +125,40 @@ function setIngredientChecked(recipe, index, checked) {
 
 function renderPill(iconName, text, extraClass = "") {
   return `<span class="meta-pill ${extraClass}">${icon(iconName)}<span>${escapeHtml(text)}</span></span>`;
+}
+
+function getRecipeStatus(recipe) {
+  const progress = getRecipeProgress(recipe);
+  const pages = buildPages(recipe);
+  const stats = getIngredientStats(recipe);
+
+  if (progress.completed) {
+    return {
+      className: "is-done",
+      label: "Lista",
+      action: "Cocinar otra vez",
+      iconName: "check",
+      stepText: `${pages.length} pasos`
+    };
+  }
+
+  if (progress.lastStep > 0) {
+    return {
+      className: "is-active",
+      label: "Continuar",
+      action: "Seguir receta",
+      iconName: "arrowRight",
+      stepText: `${Math.min(progress.lastStep + 1, pages.length)}/${pages.length}`
+    };
+  }
+
+  return {
+    className: "",
+    label: stats.checked ? `${stats.checked}/${stats.total} listos` : "Empezar",
+    action: "Abrir receta",
+    iconName: "arrowRight",
+    stepText: `${pages.length} pasos`
+  };
 }
 
 function getHeatMeta(value = "") {
@@ -293,17 +359,21 @@ function isPrepSection(section) {
 
 function renderLibrary() {
   els.recipeList.innerHTML = state.recipes.map((recipe, index) => `
-    <button class="recipe-card" type="button" data-recipe-index="${index}" style="--stagger: ${index}">
-      <span>
+    <button class="recipe-card ${getRecipeStatus(recipe).className}" type="button" data-recipe-index="${index}" style="--stagger: ${index}">
+      <span class="recipe-card-copy">
         <h2>${escapeHtml(recipe.title)}</h2>
         <p>${escapeHtml(recipe.description || "Receta guiada paso a paso.")}</p>
         <span class="meta-pills">
           ${renderPill("clock", recipe.time || "sin tiempo")}
           ${renderPill("gauge", recipe.difficulty || "principiante")}
           ${renderPill("servings", recipe.servings || "porciones a definir")}
+          ${renderPill(getRecipeStatus(recipe).iconName, getRecipeStatus(recipe).stepText, "status-pill")}
         </span>
       </span>
-      <span class="arrow" aria-hidden="true">${icon("arrowRight")}</span>
+      <span class="recipe-card-action">
+        <span>${escapeHtml(getRecipeStatus(recipe).action)}</span>
+        <span class="arrow" aria-hidden="true">${icon("arrowRight")}</span>
+      </span>
     </button>
   `).join("");
 
@@ -314,10 +384,13 @@ function renderLibrary() {
 
 function openRecipe(index) {
   state.activeRecipe = state.recipes[index];
-  state.activeStep = 0;
+  const pages = buildPages(state.activeRecipe);
+  const progress = getRecipeProgress(state.activeRecipe);
+  state.activeStep = progress.completed ? 0 : Math.min(progress.lastStep || 0, pages.length - 1);
   els.libraryView.hidden = true;
   els.readerView.hidden = false;
   els.ingredientsDrawer.hidden = true;
+  els.finishToast.hidden = true;
   els.ingredientsToggle.setAttribute("aria-expanded", "false");
   renderRecipeShell();
   renderStep();
@@ -326,11 +399,16 @@ function openRecipe(index) {
 
 function renderRecipeShell() {
   const recipe = state.activeRecipe;
+  const stats = getIngredientStats(recipe);
   els.recipeTitle.textContent = recipe.title;
   els.recipeIntro.textContent = recipe.description;
   els.recipeTime.innerHTML = `${icon("clock")}<span>${escapeHtml(recipe.time || "tiempo a definir")}</span>`;
   els.recipeDifficulty.innerHTML = `${icon("gauge")}<span>${escapeHtml(recipe.difficulty || "principiante")}</span>`;
   els.servingsBadge.innerHTML = recipe.servings ? `${icon("servings")}<span>${escapeHtml(recipe.servings)}</span>` : "";
+  els.drawerSummary.textContent = stats.total
+    ? `${stats.checked}/${stats.total} ingredientes marcados. Dejalos listos antes de avanzar fuerte.`
+    : "Esta receta no tiene ingredientes cargados.";
+  els.ingredientsToggle.innerHTML = `${icon("ingredient")}<span>Ingredientes ${stats.checked}/${stats.total}</span>`;
   els.drawerIngredients.innerHTML = recipe.ingredients.map((ingredient, index) => `
     <li>${renderIngredientCheck(recipe, ingredient, index, "drawer")}</li>
   `).join("");
@@ -344,6 +422,9 @@ function renderStep() {
 
   els.stepCard.classList.remove("is-entering");
   els.stepCard.classList.toggle("plus-page", Boolean(page.isPlus));
+  els.stepCard.classList.toggle("station-page", Boolean(page.isStation));
+  els.stepCard.classList.toggle("done-page", Boolean(page.isDone));
+  els.stepCard.dataset.heat = page.heatLevel || "";
   els.stepCard.innerHTML = page.html;
   bindIngredientChecks(els.stepCard);
   requestAnimationFrame(() => els.stepCard.classList.add("is-entering"));
@@ -353,40 +434,62 @@ function renderStep() {
     ? `<span>Terminar</span>${icon("check")}`
     : `<span>Siguiente</span>${icon("arrowRight")}`;
   els.stepCounter.innerHTML = `
-    <span>${state.activeStep + 1}/${pages.length}</span>
+    <span class="step-counter-label">${state.activeStep + 1}/${pages.length}</span>
+    <span class="step-counter-copy">${state.activeStep === 0 ? "estacion" : "paso"}</span>
     <span class="step-progress" aria-hidden="true"><span style="width: ${((state.activeStep + 1) / pages.length) * 100}%"></span></span>
   `;
 }
 
 function buildPages(recipe) {
   const heatGuideMeta = getHeatMeta(recipe.heatGuide);
+  const stats = getIngredientStats(recipe);
   let stepNumber = 0;
   return [
     {
+      isStation: true,
       html: `
         <p class="page-eyebrow">antes de prender fuego</p>
-        <h2>${icon("ingredient")}Ingredientes medidos</h2>
-        <ul class="ingredient-grid">
-          ${recipe.ingredients.map((ingredient, index) => `
-            <li>${renderIngredientCheck(recipe, ingredient, index, "page")}</li>
-          `).join("")}
-        </ul>
-      `
-    },
-    {
-      html: `
-        <p class="page-eyebrow">puesta a punto</p>
-        <h2>${icon("equipment")}Equipo listo</h2>
-        <ul class="equipment-grid">
-          ${recipe.equipment.map((item) => `<li>${icon("equipment")}<span>${escapeHtml(item)}</span></li>`).join("")}
-        </ul>
+        <h2>${icon("spark")}Prepará tu estación</h2>
+        <div class="station-grid">
+          <button class="station-tile station-ingredients" type="button" data-open-ingredients>
+            <span class="station-tile-icon">${icon("ingredient")}</span>
+            <span>
+              <strong>${stats.checked}/${stats.total} ingredientes listos</strong>
+              <span>Abrí el checklist y marcá lo que ya tenés medido.</span>
+            </span>
+          </button>
+          <div class="station-tile">
+            <span class="station-tile-icon">${icon("equipment")}</span>
+            <span>
+              <strong>${recipe.equipment.length || 0} utensilios</strong>
+              <span>${escapeHtml(summarizeList(recipe.equipment, "Equipo a definir"))}</span>
+            </span>
+          </div>
+          ${recipe.prep.length ? `
+            <div class="station-tile">
+              <span class="station-tile-icon">${icon("prep")}</span>
+              <span>
+                <strong>${recipe.prep.length} preparaciones</strong>
+                <span>${escapeHtml(summarizeList(recipe.prep, "Cortes previos"))}</span>
+              </span>
+            </div>
+          ` : ""}
+        </div>
         ${recipe.prep.length ? `
-          <div class="prep-block">
-            <p class="prep-title">${icon("prep")}Cortes y preparación previa</p>
+          <details class="station-details">
+            <summary>${icon("prep")} Ver cortes y preparación</summary>
             <ul class="prep-grid">
               ${recipe.prep.map((item) => `<li>${icon("prep")}<span>${escapeHtml(item)}</span></li>`).join("")}
             </ul>
-          </div>
+          </details>
+        ` : ""}
+        ${recipe.equipment.length ? `
+          <details class="station-details">
+            <summary>${icon("equipment")} Ver equipo completo</summary>
+            <ul class="equipment-grid">
+              ${recipe.equipment.map((item) => `<li>${icon("equipment")}<span>${escapeHtml(item)}</span></li>`).join("")}
+            </ul>
+          </details>
         ` : ""}
         ${recipe.heatGuide ? renderCallout("heat", "Guia de fuego", recipe.heatGuide, heatGuideMeta) : ""}
       `
@@ -426,14 +529,20 @@ function bindIngredientChecks(root) {
       if (state.activeStep === 0) renderStep();
     });
   });
+
+  root.querySelectorAll("[data-open-ingredients]").forEach((button) => {
+    button.addEventListener("click", () => openIngredientsDrawer());
+  });
 }
 
 function renderStepPage(step, stepNumber) {
   const eyebrow = step.isPlus ? "plus opcional" : `paso ${stepNumber}`;
   const title = step.isPlus ? `${icon("plus")}${escapeHtml(step.title)}` : escapeHtml(step.title);
+  const heatMeta = getHeatMeta(step.heat);
 
   return {
     isPlus: step.isPlus,
+    heatLevel: heatMeta.level,
     html: `
       <p class="page-eyebrow">${eyebrow}</p>
       <h2>${title}</h2>
@@ -441,11 +550,45 @@ function renderStepPage(step, stepNumber) {
       <div class="step-body">${escapeHtml(step.body)}</div>
       ${step.detail ? `<p class="step-detail">${escapeHtml(step.detail)}</p>` : ""}
       <div class="hint-stack">
-        ${step.heat ? renderCallout("heat", "Fuego", step.heat, getHeatMeta(step.heat)) : ""}
+        ${step.heat ? renderCallout("heat", "Fuego", step.heat, heatMeta) : ""}
         ${step.time ? renderCallout("timer", "Tiempo", step.time) : ""}
       </div>
     `
   };
+}
+
+function summarizeList(items, fallback) {
+  if (!items.length) return fallback;
+  const summary = items.slice(0, 2).join(" · ");
+  return items.length > 2 ? `${summary} · +${items.length - 2}` : summary;
+}
+
+function openIngredientsDrawer() {
+  els.ingredientsDrawer.hidden = false;
+  els.ingredientsToggle.setAttribute("aria-expanded", "true");
+  els.ingredientsDrawer.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+function closeReader() {
+  els.readerView.hidden = true;
+  els.libraryView.hidden = false;
+  els.ingredientsDrawer.hidden = true;
+  els.ingredientsToggle.setAttribute("aria-expanded", "false");
+  renderLibrary();
+}
+
+function completeRecipe() {
+  setRecipeProgress(state.activeRecipe, {
+    lastStep: buildPages(state.activeRecipe).length - 1,
+    completed: true,
+    completedAt: new Date().toISOString()
+  });
+  els.finishToast.innerHTML = `${icon("spark")}<span>${escapeHtml(state.activeRecipe.title)} lista. Buen cierre.</span>`;
+  els.finishToast.hidden = false;
+  setTimeout(() => {
+    closeReader();
+    els.finishToast.hidden = true;
+  }, 900);
 }
 
 function formatIngredient(ingredient) {
@@ -470,8 +613,7 @@ els.recipeFile.addEventListener("change", (event) => {
   });
 });
 els.backButton.addEventListener("click", () => {
-  els.readerView.hidden = true;
-  els.libraryView.hidden = false;
+  closeReader();
 });
 els.ingredientsToggle.addEventListener("click", () => {
   const willOpen = els.ingredientsDrawer.hidden;
@@ -481,17 +623,20 @@ els.ingredientsToggle.addEventListener("click", () => {
 els.previousStep.addEventListener("click", () => {
   if (state.activeStep > 0) {
     state.activeStep -= 1;
+    setRecipeProgress(state.activeRecipe, { lastStep: state.activeStep, completed: false });
     renderStep();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 });
 els.nextStep.addEventListener("click", () => {
   const pages = buildPages(state.activeRecipe);
   if (state.activeStep < pages.length - 1) {
     state.activeStep += 1;
+    setRecipeProgress(state.activeRecipe, { lastStep: state.activeStep, completed: false });
     renderStep();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   } else {
-    els.readerView.hidden = true;
-    els.libraryView.hidden = false;
+    completeRecipe();
   }
 });
 

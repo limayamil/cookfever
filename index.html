@@ -14,12 +14,12 @@
     <main class="app-shell">
       <section class="library-view" id="libraryView" aria-labelledby="appTitle">
         <header class="masthead">
-          <div>
+          <div class="brand-lockup">
             <p class="kicker">recetario mobile</p>
             <h1 id="appTitle">Cookfever</h1>
           </div>
           <div class="masthead-actions">
-            <button class="file-button" id="uploadButton" type="button" aria-label="Cargar receta Markdown">.md</button>
+            <button class="file-button" id="uploadButton" type="button" aria-label="Cargar receta Markdown" title="Cargar receta Markdown">.md</button>
             <input id="recipeFile" type="file" accept=".md,text/markdown,text/plain" hidden>
             <button class="icon-button" id="reloadButton" type="button" aria-label="Recargar recetas" title="Recargar recetas">
               <span aria-hidden="true">↻</span>
@@ -45,6 +45,7 @@
             <h2>Ingredientes</h2>
             <span id="servingsBadge"></span>
           </div>
+          <p class="drawer-summary" id="drawerSummary"></p>
           <ul id="drawerIngredients"></ul>
         </aside>
 
@@ -64,6 +65,8 @@
             <button class="nav-button primary" id="nextStep" type="button">Siguiente</button>
           </nav>
         </article>
+
+        <div class="finish-toast" id="finishToast" role="status" aria-live="polite" hidden></div>
       </section>
     </main>
 
