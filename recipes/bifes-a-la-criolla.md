@@ -46,11 +46,17 @@
 - tiempo: 2 min por lado.
 - detalle: Solo busca color por fuera. No hace falta cocinarlos por completo todavia.
 
-### Sudar las verduras
-- accion: Reserva la carne en un plato, baja el fuego y agrega el resto del aceite con cebolla y morrones.
+### Desglasar el fondo
+- accion: Reserva la carne en un plato, baja a fuego medio y vierte media taza de caldo para raspar el fondo de coccion.
+- fuego: Fuego medio.
+- tiempo: 2 min.
+- detalle: Ese liquido levanta lo que dejo la carne y sera la base del sabor. Si usas vino blanco, sumalo antes del caldo y deja que hierva 1 minuto.
+
+### Cocinar verduras y sumar pluses
+- accion: Agrega el resto del aceite, la cebolla y los morrones al fondo desglasado. Si usas verdeo, suma aqui la parte blanca. Cocina hasta que se ablanden.
 - fuego: Fuego medio.
 - tiempo: 6 min.
-- detalle: Revuelve seguido para que las verduras se ablanden sin tomar gusto quemado.
+- detalle: Revuelve seguido para que las verduras se mezclen con el fondo y se ablanden sin quemarse.
 
 ### Plus: Perfumar con ajo
 - accion: Suma el ajo picado cuando la cebolla y los morrones ya esten blandos.
@@ -58,35 +64,29 @@
 - tiempo: 1 min.
 - detalle: Es opcional, pero le da mas fondo a la salsa. Si el ajo se dora muy rapido, baja el fuego.
 
-### Plus: Sumar verdeo
-- accion: Agrega la parte blanca de las cebollitas de verdeo junto con el ajo o apenas despues.
+### Condimentar
+- accion: Agrega sal, pimienta y pimenton. Si usas laurel u oregano y aji molido, sumalos en este momento. Mezcla hasta incorporar.
 - fuego: Fuego medio-bajo.
 - tiempo: 1 min.
-- detalle: Se integra mejor si apenas se ablanda. Reserva la parte verde para el final, asi mantiene frescura y color.
+- detalle: Mezcla apenas para repartir bien los condimentos sin que el pimenton se queme.
 
-### Plus: Desglasar con vino blanco
-- accion: Vierte el vino blanco y raspa el fondo para despegar los jugos caramelizados antes de sumar el tomate.
-- fuego: Fuego medio.
-- tiempo: 2 min.
-- detalle: Dejalo hervir un poco para que se evapore el alcohol. Aporta acidez suave y hace la salsa mas aromatica.
-
-### Armar la salsa
-- accion: Suma tomate triturado, caldo, pimenton, sal y pimienta. Mezcla bien.
-- fuego: Fuego medio.
+### Armar en capas
+- accion: Acomoda una capa con las rodajas de papa en la base, vuelve a poner los bifes encima y cubre con el tomate triturado.
+- fuego: Sin fuego.
 - tiempo: 3 min.
-- detalle: Raspa el fondo con la cuchara para levantar el sabor que dejo la carne.
+- detalle: Trata de repartir el tomate de forma pareja para que toda la preparacion reciba humedad.
 
-### Plus: Condimentar mas criollo
-- accion: Agrega laurel u oregano y aji molido junto con el tomate y el caldo.
-- fuego: Fuego medio.
+### Sumar el resto del caldo
+- accion: Vierte por encima el resto del caldo, procurando mojar las papas y la carne sin desarmar las capas.
+- fuego: Sin fuego.
 - tiempo: 1 min.
-- detalle: El laurel suma aroma lento; el aji molido da un picor suave. Usalos de a poco si no conoces su intensidad.
+- detalle: El liquido debe llegar al fondo y asomar un poco entre las capas. Si hace falta, agrega un pequeno chorrito extra de agua.
 
-### Cocinar papas y carne
-- accion: Agrega las papas en capas, apoya los bifes encima y tapa la sarten.
+### Cocinar tapado
+- accion: Tapa la sarten y cocina hasta que las papas esten tiernas y la carne termine de hacerse.
 - fuego: Fuego bajo.
-- tiempo: 22 min.
-- detalle: La salsa debe burbujear suave. Si se seca, agrega un chorrito mas de caldo o agua.
+- tiempo: 30 min.
+- detalle: La salsa debe burbujear suave. Evita destapar seguido para que no se pierda vapor.
 
 ### Reposar y servir
 - accion: Apaga el fuego, deja reposar tapado y ajusta sal y pimienta antes de servir.
