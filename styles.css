@@ -387,8 +387,14 @@ h1 {
   left: 50%;
   z-index: 7;
   width: min(calc(100vw - 32px), 760px);
-  max-height: min(70svh, 560px);
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-height: min(560px, calc(100vh - 96px));
+  max-height: min(560px, calc(100dvh - 96px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   transform: translateX(-50%);
   padding: var(--space-5);
   border: 1px solid var(--color-line);
@@ -408,9 +414,7 @@ h1 {
 .ingredients-drawer ul {
   display: grid;
   gap: var(--space-2);
-  max-height: min(48svh, 390px);
-  overflow: auto;
-  margin: var(--space-3) 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -1109,7 +1113,8 @@ h1 {
   .ingredients-drawer {
     top: 68px;
     width: calc(100vw - 24px);
-    max-height: 68svh;
+    max-height: calc(100vh - 84px);
+    max-height: calc(100dvh - 84px);
     padding: var(--space-4);
   }
 

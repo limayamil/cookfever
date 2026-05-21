@@ -398,6 +398,43 @@ function openRecipe(index) {
   window.scrollTo({ top: 0, behavior: "instant" });
 }
 
+function getDrawerSummaryText(stats) {
+  return stats.total
+    ? `${stats.checked}/${stats.total} ingredientes marcados. Dejalos listos antes de avanzar fuerte.`
+    : "Esta receta no tiene ingredientes cargados.";
+}
+
+function getIngredientsToggleLabel(stats) {
+  return `${icon("ingredient")}<span>Ingredientes ${stats.checked}/${stats.total}</span>`;
+}
+
+function renderDrawerIngredients(recipe) {
+  els.drawerIngredients.innerHTML = recipe.ingredients.map((ingredient, index) => `
+    <li>${renderIngredientCheck(recipe, ingredient, index, "drawer")}</li>
+  `).join("");
+  bindIngredientChecks(els.drawerIngredients);
+}
+
+function syncIngredientChecks(index, checked) {
+  document.querySelectorAll(`[data-ingredient-index="${index}"]`).forEach((input) => {
+    const isCurrentInput = input === document.activeElement;
+    input.checked = checked;
+    input.closest(".ingredient-check")?.classList.toggle("is-checked", checked);
+    if (isCurrentInput) input.focus({ preventScroll: true });
+  });
+}
+
+function refreshIngredientUI() {
+  const stats = getIngredientStats(state.activeRecipe);
+  els.drawerSummary.textContent = getDrawerSummaryText(stats);
+  els.ingredientsToggle.innerHTML = getIngredientsToggleLabel(stats);
+
+  if (state.activeStep === 0) {
+    const stationCount = els.stepCard.querySelector(".station-ingredients strong");
+    if (stationCount) stationCount.textContent = `${stats.checked}/${stats.total} ingredientes listos`;
+  }
+}
+
 function renderRecipeShell() {
   const recipe = state.activeRecipe;
   const stats = getIngredientStats(recipe);
@@ -406,14 +443,9 @@ function renderRecipeShell() {
   els.recipeTime.innerHTML = `${icon("clock")}<span>${escapeHtml(recipe.time || "tiempo a definir")}</span>`;
   els.recipeDifficulty.innerHTML = `${icon("gauge")}<span>${escapeHtml(recipe.difficulty || "principiante")}</span>`;
   els.servingsBadge.innerHTML = recipe.servings ? `${icon("servings")}<span>${escapeHtml(recipe.servings)}</span>` : "";
-  els.drawerSummary.textContent = stats.total
-    ? `${stats.checked}/${stats.total} ingredientes marcados. Dejalos listos antes de avanzar fuerte.`
-    : "Esta receta no tiene ingredientes cargados.";
-  els.ingredientsToggle.innerHTML = `${icon("ingredient")}<span>Ingredientes ${stats.checked}/${stats.total}</span>`;
-  els.drawerIngredients.innerHTML = recipe.ingredients.map((ingredient, index) => `
-    <li>${renderIngredientCheck(recipe, ingredient, index, "drawer")}</li>
-  `).join("");
-  bindIngredientChecks(els.drawerIngredients);
+  els.drawerSummary.textContent = getDrawerSummaryText(stats);
+  els.ingredientsToggle.innerHTML = getIngredientsToggleLabel(stats);
+  renderDrawerIngredients(recipe);
 }
 
 function renderStep() {
@@ -520,9 +552,12 @@ function renderIngredientCheck(recipe, ingredient, index, variant) {
 function bindIngredientChecks(root) {
   root.querySelectorAll("[data-ingredient-index]").forEach((input) => {
     input.addEventListener("change", () => {
-      setIngredientChecked(state.activeRecipe, input.dataset.ingredientIndex, input.checked);
-      renderRecipeShell();
-      if (state.activeStep === 0) renderStep();
+      const ingredientIndex = Number(input.dataset.ingredientIndex);
+      const drawerScrollTop = els.drawerIngredients.scrollTop;
+      setIngredientChecked(state.activeRecipe, ingredientIndex, input.checked);
+      syncIngredientChecks(ingredientIndex, input.checked);
+      refreshIngredientUI();
+      els.drawerIngredients.scrollTop = drawerScrollTop;
     });
   });
 
