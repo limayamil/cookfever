@@ -12,7 +12,8 @@ const state = {
   activeRecipe: null,
   activeStep: 0,
   checkedIngredients: readStorage(ingredientStorageKey),
-  recipeProgress: readStorage(progressStorageKey)
+  recipeProgress: readStorage(progressStorageKey),
+  ingredientDrawerGuardUntil: 0
 };
 
 const els = {
@@ -389,10 +390,10 @@ function openRecipe(index) {
   const pages = buildPages(state.activeRecipe);
   const progress = getRecipeProgress(state.activeRecipe);
   state.activeStep = progress.completed ? 0 : Math.min(progress.lastStep || 0, pages.length - 1);
+  state.ingredientDrawerGuardUntil = performance.now() + 450;
   els.libraryView.hidden = true;
   els.readerView.hidden = false;
-  els.ingredientsDrawer.hidden = true;
-  els.ingredientsToggle.setAttribute("aria-expanded", "false");
+  closeIngredientsDrawer();
   renderRecipeShell();
   renderStep();
   window.scrollTo({ top: 0, behavior: "instant" });
@@ -562,7 +563,11 @@ function bindIngredientChecks(root) {
   });
 
   root.querySelectorAll("[data-open-ingredients]").forEach((button) => {
-    button.addEventListener("click", () => openIngredientsDrawer());
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (!canOpenIngredientsFromStation()) return;
+      openIngredientsDrawer();
+    });
   });
 }
 
@@ -600,17 +605,36 @@ function getStationSummary(recipe) {
   return parts.length ? parts.join(" · ") : "Equipo y cortes a definir";
 }
 
+function canOpenIngredientsFromStation() {
+  return performance.now() >= state.ingredientDrawerGuardUntil;
+}
+
 function openIngredientsDrawer() {
   els.ingredientsDrawer.hidden = false;
   els.ingredientsToggle.setAttribute("aria-expanded", "true");
   els.ingredientsDrawer.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
+function closeIngredientsDrawer() {
+  els.ingredientsDrawer.hidden = true;
+  els.ingredientsToggle.setAttribute("aria-expanded", "false");
+}
+
+function toggleIngredientsDrawer() {
+  const willOpen = els.ingredientsDrawer.hidden;
+  if (willOpen) {
+    openIngredientsDrawer();
+    return;
+  }
+
+  state.ingredientDrawerGuardUntil = performance.now() + 250;
+  closeIngredientsDrawer();
+}
+
 function closeReader() {
   els.readerView.hidden = true;
   els.libraryView.hidden = false;
-  els.ingredientsDrawer.hidden = true;
-  els.ingredientsToggle.setAttribute("aria-expanded", "false");
+  closeIngredientsDrawer();
   renderLibrary();
 }
 
@@ -647,10 +671,9 @@ els.recipeFile.addEventListener("change", (event) => {
 els.backButton.addEventListener("click", () => {
   closeReader();
 });
-els.ingredientsToggle.addEventListener("click", () => {
-  const willOpen = els.ingredientsDrawer.hidden;
-  els.ingredientsDrawer.hidden = !willOpen;
-  els.ingredientsToggle.setAttribute("aria-expanded", String(willOpen));
+els.ingredientsToggle.addEventListener("click", (event) => {
+  event.preventDefault();
+  toggleIngredientsDrawer();
 });
 els.previousStep.addEventListener("click", () => {
   if (state.activeStep > 0) {
