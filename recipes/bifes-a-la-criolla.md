@@ -1,9 +1,9 @@
 # Bifes a la Criolla
 
 ## Datos
-- descripcion: Bifes jugosos con salsa criolla, papas tiernas y verduras dulces.
+- descripcion: Bifes jugosos con salsa criolla, papas tiernas, zanahoria y huevos duros.
 - porciones: 3 porciones
-- tiempo: 45 min
+- tiempo: 55 min
 - dificultad: principiante
 - guia de fuego: Alto = sellar la carne rapido. Medio = sudar verduras sin quemarlas. Bajo = cocinar tapado hasta que las papas esten tiernas.
 
@@ -12,7 +12,9 @@
 - 1 u | cebolla | cortada en pluma fina
 - 1 u | morron verde | cortado en tiras
 - 1 u | morron rojo | cortado en tiras
+- 2 u | zanahorias | peladas y cortadas en rodajas finas
 - 2 u | papas | peladas y cortadas en rodajas finas
+- 2 u | huevos | duros, pelados y cortados al medio o en cuartos
 - 250 g | tomate triturado
 - 1 taza | caldo | de carne o verduras
 - 1 cdta | pimenton
@@ -36,7 +38,9 @@
 ## Preparacion previa
 - Corta la cebolla en pluma fina.
 - Corta el morron verde y el morron rojo en tiras.
+- Pela las zanahorias y cortalas en rodajas finas.
 - Pela las papas y cortalas en rodajas finas.
+- Hierve los huevos durante 10 min, enfrialos, pelalos y cortalos al medio o en cuartos.
 - Si usas los pluses, pica el ajo y el perejil, separa la parte blanca y verde de las cebollitas de verdeo, y deja a mano el laurel u oregano, el aji molido y el vino blanco.
 
 ## Pasos
@@ -53,10 +57,10 @@
 - detalle: Ese liquido levanta lo que dejo la carne y sera la base del sabor. Si usas vino blanco, sumalo antes del caldo y deja que hierva 1 minuto.
 
 ### Cocinar verduras y sumar pluses
-- accion: Agrega el resto del aceite, la cebolla y los morrones al fondo desglasado. Si usas verdeo, suma aqui la parte blanca. Cocina hasta que se ablanden.
+- accion: Agrega el resto del aceite, la cebolla, los morrones y la zanahoria al fondo desglasado. Si usas verdeo, suma aqui la parte blanca. Cocina hasta que se ablanden.
 - fuego: Fuego medio.
-- tiempo: 6 min.
-- detalle: Revuelve seguido para que las verduras se mezclen con el fondo y se ablanden sin quemarse.
+- tiempo: 8 min.
+- detalle: Revuelve seguido para que las verduras se mezclen con el fondo y se ablanden sin quemarse. La zanahoria debe empezar a perder rigidez, aunque terminara de cocinarse despues.
 
 ### Plus: Perfumar con ajo
 - accion: Suma el ajo picado cuando la cebolla y los morrones ya esten blandos.
@@ -71,10 +75,10 @@
 - detalle: Mezcla apenas para repartir bien los condimentos sin que el pimenton se queme.
 
 ### Armar en capas
-- accion: Acomoda una capa con las rodajas de papa en la base, vuelve a poner los bifes encima y cubre con el tomate triturado.
+- accion: Acomoda una capa con las rodajas de papa y zanahoria en la base, vuelve a poner los bifes encima y cubre con el tomate triturado.
 - fuego: Sin fuego.
 - tiempo: 3 min.
-- detalle: Trata de repartir el tomate de forma pareja para que toda la preparacion reciba humedad.
+- detalle: Trata de repartir el tomate de forma pareja para que toda la preparacion reciba humedad y las verduras se cocinen de manera uniforme.
 
 ### Sumar el resto del caldo
 - accion: Vierte por encima el resto del caldo, procurando mojar las papas y la carne sin desarmar las capas.
@@ -89,10 +93,10 @@
 - detalle: La salsa debe burbujear suave. Evita destapar seguido para que no se pierda vapor.
 
 ### Reposar y servir
-- accion: Apaga el fuego, deja reposar tapado y ajusta sal y pimienta antes de servir.
+- accion: Apaga el fuego, deja reposar tapado, ajusta sal y pimienta y sirve con los huevos duros por encima o al costado.
 - fuego: Sin fuego.
 - tiempo: 4 min.
-- detalle: El reposo acomoda los jugos y termina de integrar la salsa con las papas.
+- detalle: El reposo acomoda los jugos y termina de integrar la salsa con las papas. Los huevos duros suman un cierre clasico y absorben bien parte de la salsa.
 
 ### Plus: Terminar con perejil
 - accion: Espolvorea perejil fresco picado y la parte verde del verdeo justo antes de llevar a la mesa.
