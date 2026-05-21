@@ -405,6 +405,10 @@ h1 {
   animation: drawer-drop 220ms ease both;
 }
 
+.ingredients-drawer[hidden] {
+  display: none;
+}
+
 .ingredients-drawer h2 {
   margin: 0;
   font-family: var(--font-display);
