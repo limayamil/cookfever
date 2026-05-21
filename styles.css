@@ -556,7 +556,9 @@ h1 {
 .page-card.plus-page {
   border-color: color-mix(in srgb, var(--color-plus) 34%, transparent);
   background:
-    linear-gradient(90deg, var(--color-plus-wash), transparent 18%),
+    radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--color-plus) 14%, transparent), transparent 26%),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--color-plus) 9%, transparent), transparent 30%),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-plus-wash) 82%, transparent), transparent 26%),
     var(--color-page);
 }
 
@@ -612,21 +614,6 @@ h1 {
 .page-card.plus-page .page-eyebrow,
 .page-card.plus-page h2 .ui-icon {
   color: var(--color-plus);
-}
-
-.plus-note {
-  display: inline-flex;
-  width: fit-content;
-  max-width: 100%;
-  margin: calc(var(--space-3) * -1) 0 var(--space-5);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid color-mix(in srgb, var(--color-plus) 22%, transparent);
-  border-radius: 999px;
-  color: var(--color-plus);
-  background: var(--color-plus-wash);
-  font-size: 0.82rem;
-  font-weight: 800;
-  line-height: 1.35;
 }
 
 .ingredient-grid,

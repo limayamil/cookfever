@@ -542,7 +542,6 @@ function renderStepPage(step, stepNumber) {
     html: `
       <p class="page-eyebrow">${eyebrow}</p>
       <h2>${title}</h2>
-      ${step.isPlus ? `<p class="plus-note">Bonus para mejorar la receta. Podés saltearlo y seguir con el próximo paso.</p>` : ""}
       <div class="step-body">${escapeHtml(step.body)}</div>
       ${step.detail ? `<p class="step-detail">${escapeHtml(step.detail)}</p>` : ""}
       <div class="hint-stack">
